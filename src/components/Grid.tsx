@@ -6,6 +6,8 @@ import { setSelectedQuadrant, setFormData } from "../redux/waterShiftSlice";
 import { toast } from "react-toastify";
 
 interface RiegoData {
+  id: number;
+  waterShiftId: number;
   quadrant: number;
   startDate: string;
   finishDate: string;
@@ -43,10 +45,10 @@ const Grid: React.FC = () => {
     dispatch(setSelectedQuadrant(quadrant));
     const log = datos.find((item) => item.quadrant === quadrant);
     if (log) {
-      dispatch(setFormData({ startDate: log.startDate, finishDate: log.finishDate }));
+      dispatch(setFormData({ startDate: log.startDate, finishDate: log.finishDate , editMode: true }))
     } else {
       const now = new Date();
-      dispatch(setFormData({ startDate: now.toISOString(), finishDate: "" }));
+      dispatch(setFormData({ startDate: now.toISOString(), finishDate: "" ,editMode: false }));
     }
     setModalOpen(true);
   };
@@ -54,16 +56,32 @@ const Grid: React.FC = () => {
   const handleSubmit = async (values: { startDate: string; finishDate: string }) => {
     if (!selectedQuadrant || !waterShiftId) return;
     try {
-      const response = await fetch("http://localhost:3000/api/irrigation-logs/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          quadrant: selectedQuadrant,
-          startDate: values.startDate,
-          finishDate: values.finishDate,
-          waterShiftId: waterShiftId,
-        }),
-      });
+      const log = datos.find((item) => item.quadrant === selectedQuadrant);
+      let response;
+      if (log) {
+        response = await fetch(`http://localhost:3000/api/irrigation-logs/${log.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: log.id,
+            quadrant: selectedQuadrant,
+            startDate: values.startDate,
+            finishDate: values.finishDate,
+            waterShiftId: waterShiftId,
+          }),
+        });
+      } else {
+        response = await fetch("http://localhost:3000/api/irrigation-logs/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            quadrant: selectedQuadrant,
+            startDate: values.startDate,
+            finishDate: values.finishDate,
+            waterShiftId: waterShiftId,
+          }),
+        });
+      }
 
       if (response.ok) {
         const newLog = await response.json();
@@ -77,15 +95,20 @@ const Grid: React.FC = () => {
           return [...prev, newLog];
         });
         setModalOpen(false);
-        toast.success("Irrigation Log creado con éxito"); // Mensaje de éxito
+        if (log) {
+          toast.success("Registro de Riego actualizado con éxito");
+        }
+        else {
+          toast.success("Registro de Riego creado con éxito");
+        }
       } else {
         const errorData = await response.json();
         const errorMessage = errorData.message || "Error al crear el Irrigation Log";
-        toast.error(errorMessage); // Mensaje de error
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Error creating irrigation log:", error);
-      toast.error("Error en la conexión con el servidor"); // Error de red
+      toast.error("Error en la conexión con el servidor");
     }
   };
 

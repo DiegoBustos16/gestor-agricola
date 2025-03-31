@@ -10,6 +10,14 @@
   clip-path: polygon(0% 0%, 100% 0%, 85% 0%, 70% 100%, 0% 100%)!important;
 }
 
+.react-datetime-picker__wrapper {
+  border: none!important;
+}
+
+select option {
+  text-align: center;
+}
+
 
 /*default styles*/
 :root {

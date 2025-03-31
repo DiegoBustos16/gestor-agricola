@@ -2,22 +2,26 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface WaterShiftState {
   selectedWaterShiftId: number | null;
-  dateRange: string | null;
+  waterShifts: any[];
   selectedQuadrant: number | null;
   formData: {
     startDate: string;
     finishDate: string;
+    editMode: boolean;
   };
+  shouldRefetchWaterShifts: boolean; 
 }
 
 const initialState: WaterShiftState = {
   selectedWaterShiftId: null,
-  dateRange: null,
+  waterShifts: [],
   selectedQuadrant: null,
   formData: {
     startDate: "",
     finishDate: "",
+    editMode: false,
   },
+  shouldRefetchWaterShifts: false,
 };
 
 const waterShiftSlice = createSlice({
@@ -27,18 +31,21 @@ const waterShiftSlice = createSlice({
     setWaterShift: (state, action: PayloadAction<number | null>) => {
       state.selectedWaterShiftId = action.payload;
     },
-    setDateRange: (state, action: PayloadAction<string | null>) => {
-      state.dateRange = action.payload;
+    setWaterShifts: (state, action: PayloadAction<any[]>) => {
+      state.waterShifts = action.payload;
     },
     setSelectedQuadrant: (state, action: PayloadAction<number | null>) => {
       state.selectedQuadrant = action.payload;
     },
-    setFormData: (state, action: PayloadAction<{ startDate: string; finishDate: string }>) => {
+    setFormData: (state, action: PayloadAction<{ startDate: string; finishDate: string , editMode:boolean}>) => {
       state.formData = action.payload;
+    },
+    setShouldRefetchWaterShifts: (state, action: PayloadAction<boolean>) => {
+      state.shouldRefetchWaterShifts = action.payload;
     },
   },
 });
 
-export const { setWaterShift, setDateRange, setSelectedQuadrant, setFormData } = waterShiftSlice.actions;
+export const { setWaterShift, setWaterShifts, setSelectedQuadrant, setFormData, setShouldRefetchWaterShifts } = waterShiftSlice.actions;
 
 export default waterShiftSlice.reducer;

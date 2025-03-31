@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setWaterShift } from "../redux/waterShiftSlice";
+import { setWaterShift, setShouldRefetchWaterShifts, setWaterShifts} from "../redux/waterShiftSlice";
 import { RootState } from "../redux/store";
 
 const WaterShiftSelector: React.FC = () => {
   const dispatch = useDispatch();
-  const [waterShifts, setWaterShifts] = useState<any[]>([]);
+  const [waterShiftsList, setWaterShiftsList] = useState<any[]>([]);
   const selectedWaterShift = useSelector((state: RootState) => state.waterShift.selectedWaterShiftId);
+  const shouldRefetchWaterShifts = useSelector((state: RootState) => state.waterShift.shouldRefetchWaterShifts);
 
   useEffect(() => {
     const fetchWaterShifts = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/water-shifts/");
         const data = await response.json();
-        setWaterShifts(data);
+        setWaterShiftsList(data);
+        dispatch(setWaterShifts(data));
 
         if (data.length > 0) {
           const latestShift = data.reduce((prev: any, current: any) => {
@@ -23,26 +25,32 @@ const WaterShiftSelector: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching water shifts:", error);
+      } finally {
+        if (shouldRefetchWaterShifts) {
+          dispatch(setShouldRefetchWaterShifts(false));
+        }
       }
     };
 
     fetchWaterShifts();
-  }, [dispatch]);
-
+  }, [dispatch, shouldRefetchWaterShifts]);
   return (
     <div>
-      <select className="borderrounded bg-black"
+      <select
+        className="border rounded bg-black min-w-30 aspect-6/2"
         value={selectedWaterShift || ""}
         onChange={(e) => dispatch(setWaterShift(Number(e.target.value)))}
       >
-        {waterShifts.map((shift) => (
+        {waterShiftsList.map((shift) => (
           <option key={shift.id} value={shift.id}>
-            {new Date(shift.startDate).toLocaleDateString('es-ES', {
-              month: '2-digit',
-              day: '2-digit',
-            })}-{new Date(shift.finishDate).toLocaleDateString('es-ES', {
-              month: '2-digit',
-              day: '2-digit',
+            {new Date(shift.startDate).toLocaleDateString("es-ES", {
+              month: "2-digit",
+              day: "2-digit",
+            })}
+            -
+            {new Date(shift.finishDate).toLocaleDateString("es-ES", {
+              month: "2-digit",
+              day: "2-digit",
             })}
           </option>
         ))}

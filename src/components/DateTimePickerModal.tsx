@@ -3,7 +3,6 @@ import { Formik, Form, ErrorMessage } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import DateTimePicker from "react-datetime-picker";
-import "react-datetime-picker/dist/DateTimePicker.css";
 import { irrigationLogValidationSchema } from "../validation/validationSchemas";
 import { setFormData } from "../redux/waterShiftSlice";
 import 'react-datetime-picker/dist/DateTimePicker.css';
@@ -26,9 +25,11 @@ const DateTimePickerModal: React.FC<DateTimePickerModalProps> = ({ type, onCance
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/60 modal z-1">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[350px] text-black">
-        <h2 className="text-lg font-bold mb-4">
-          {isIrrigationLog ? "Crear Irrigation Log" : "Crear Turno de Riego"}
-        </h2>
+  <h2 className="text-lg font-bold mb-4">
+    {formData.editMode
+      ? (isIrrigationLog ? "Editar Registro de Riego" : "Editar Turno de Riego")
+      : (isIrrigationLog ? "Crear Registro de Riego" : "Crear Turno de Riego")}
+  </h2>
         {isIrrigationLog && (
           <p className="text-sm mb-2">
             Cuartel: <span className="font-semibold">{selectedQuadrant}</span>
