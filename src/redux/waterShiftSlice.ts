@@ -1,15 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+interface FormData {
+  id?: number;
+  startDate: string;
+  finishDate: string;
+  editMode: boolean;
+}
+
 interface WaterShiftState {
   selectedWaterShiftId: number | null;
   waterShifts: any[];
   selectedQuadrant: number | null;
-  formData: {
-    startDate: string;
-    finishDate: string;
-    editMode: boolean;
-  };
-  shouldRefetchWaterShifts: boolean; 
+  formData: FormData;
+  shouldRefetchWaterShifts: boolean;
+  viewMode: "current" | "history";
+  fromDate: string | null;
+  toDate: string | null;
 }
 
 const initialState: WaterShiftState = {
@@ -22,6 +28,9 @@ const initialState: WaterShiftState = {
     editMode: false,
   },
   shouldRefetchWaterShifts: false,
+  viewMode: "current",
+  fromDate: null,
+  toDate: null,
 };
 
 const waterShiftSlice = createSlice({
@@ -37,15 +46,30 @@ const waterShiftSlice = createSlice({
     setSelectedQuadrant: (state, action: PayloadAction<number | null>) => {
       state.selectedQuadrant = action.payload;
     },
-    setFormData: (state, action: PayloadAction<{ startDate: string; finishDate: string , editMode:boolean}>) => {
+    setFormData: (state, action: PayloadAction<FormData>) => {
       state.formData = action.payload;
     },
     setShouldRefetchWaterShifts: (state, action: PayloadAction<boolean>) => {
       state.shouldRefetchWaterShifts = action.payload;
     },
+    setViewMode: (state, action: PayloadAction<"current" | "history">) => {
+      state.viewMode = action.payload;
+    },
+    setFilterDates: (state, action) => {
+      state.fromDate = action.payload.fromDate;
+      state.toDate = action.payload.toDate;
+    },
   },
 });
 
-export const { setWaterShift, setWaterShifts, setSelectedQuadrant, setFormData, setShouldRefetchWaterShifts } = waterShiftSlice.actions;
+export const {
+  setWaterShift,
+  setWaterShifts,
+  setSelectedQuadrant,
+  setFormData,
+  setShouldRefetchWaterShifts,
+  setViewMode,
+  setFilterDates,
+} = waterShiftSlice.actions;
 
 export default waterShiftSlice.reducer;

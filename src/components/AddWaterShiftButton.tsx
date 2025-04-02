@@ -11,7 +11,6 @@ const AddWaterShiftButton: React.FC = () => {
   const dispatch = useDispatch();
   const selectedWaterShiftId = useSelector((state: RootState) => state.waterShift.selectedWaterShiftId);
   const waterShifts = useSelector((state: RootState) => state.waterShift.waterShifts);
-
   const handleTime = (isEdit: boolean) => {
     if(isEdit){
       if (!selectedWaterShiftId) {
@@ -47,18 +46,17 @@ const AddWaterShiftButton: React.FC = () => {
     try {
       let response;
       if(editShift){
-        const waterShiftId = useSelector((state: RootState) => state.waterShift.selectedWaterShiftId);
-        response = await fetch(`http://localhost:3000/api/water-shifts/${waterShiftId}`, {
+        response = await fetch(`${import.meta.env.VITE_API_URL}/api/water-shifts/${selectedWaterShiftId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            id: waterShiftId,
+            id: selectedWaterShiftId,
             startDate: values.startDate,
             finishDate: values.finishDate,
           }),
         });
       }else{
-      response = await fetch("http://localhost:3000/api/water-shifts", {
+      response = await fetch(`${import.meta.env.VITE_API_URL}/api/water-shifts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -12,7 +12,7 @@ const WaterShiftSelector: React.FC = () => {
   useEffect(() => {
     const fetchWaterShifts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/water-shifts/");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/water-shifts/`);
         const data = await response.json();
         setWaterShiftsList(data);
         dispatch(setWaterShifts(data));

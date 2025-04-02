@@ -10,24 +10,23 @@ const formatDate = (date: string) => {
 };
 
 const FormattedDate: React.FC = () => {
-    const selectedWaterShiftId = useSelector((state: RootState) => state.waterShift.selectedWaterShiftId);
-    const waterShifts = useSelector((state: RootState) => state.waterShift.waterShifts);
+  const selectedWaterShiftId = useSelector((state: RootState) => state.waterShift.selectedWaterShiftId);
+  const waterShifts = useSelector((state: RootState) => state.waterShift.waterShifts);
 
-    const selectedShift = waterShifts.find((shift) => shift.id === selectedWaterShiftId);
+  const selectedShift = waterShifts.find((shift) => shift.id === selectedWaterShiftId);
+  const startDate = selectedShift ? selectedShift.startDate : "";
+  const finishDate = selectedShift ? selectedShift.finishDate : "";
 
-    const startDate = selectedShift ? selectedShift.startDate : "";
-    const finishDate = selectedShift ? selectedShift.finishDate : "";
+  const formattedStartDate = formatDate(startDate);
+  const formattedFinishDate = formatDate(finishDate);
 
-    const formattedStartDate = formatDate(startDate);
-    const formattedFinishDate = formatDate(finishDate);
-    
-    return (
-          <div className="flex-1 text-center justify-self-center">
-            <h2 className="!text-4xl inline-block">
-              {formattedStartDate && formattedFinishDate ? `${formattedStartDate} - ${formattedFinishDate}` : ""}
-            </h2>
-          </div>
-      );
-    }
+  return (
+    <div className="text-center">
+      <h2 className="text-lg md:text-2xl">
+        {formattedStartDate && formattedFinishDate ? `${formattedStartDate} - ${formattedFinishDate}` : ""}
+      </h2>
+    </div>
+  );
+};
 
 export default FormattedDate;
